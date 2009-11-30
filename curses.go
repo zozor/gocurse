@@ -65,22 +65,34 @@ func Initscr() (*Window, os.Error) {
 	return Stdwin, nil;
 }
 
-func Newwin(rows int16, cols int16, starty int16, startx int16) *Window {
+func Newwin(rows int, cols int, starty int, startx int) (*Window, os.Error) {
 	nw := (*Window)(C.newwin(C.int(rows), C.int(cols), C.int(starty), C.int(startx)));
 
-	return nw;
+	if nw == nil {
+		return nil, CursesError{"Failed to create window"};
+	}
+
+	return nw, nil;
 }
 
-func (win *Window) Subwin(rows int16, cols int16, starty int16, startx int16) *Window {
+func (win *Window) Subwin(rows int, cols int, starty int, startx int) (*Window, os.Error)  {
 	sw := (*Window)(C.subwin((*C.WINDOW)(win), C.int(rows), C.int(cols), C.int(starty), C.int(startx)));
 
-	return sw;
+	if sw == nil {
+		return nil, CursesError{"Failed to create window"};
+	}
+
+	return sw, nil;
 }
 
-func (win *Window) Derwin(rows int16, cols int16, starty int16, startx int16) *Window {
+func (win *Window) Derwin(rows int, cols int, starty int, startx int) (*Window, os.Error)  {
 	dw := (*Window)(C.derwin((*C.WINDOW)(win), C.int(rows), C.int(cols), C.int(starty), C.int(startx)));
 
-	return dw;
+	if dw == nil {
+		return nil, CursesError{"Failed to create window"};
+	}
+
+	return dw, nil;
 }
 
 func Start_color() os.Error {
@@ -92,7 +104,7 @@ func Start_color() os.Error {
 	return nil;
 }
 
-func Init_pair(pair int16, fg int16, bg int16) os.Error {
+func Init_pair(pair int, fg int, bg int) os.Error {
 	if C.init_pair(C.short(pair), C.short(fg), C.short(bg)) == 0 {
 		return CursesError{"Init_pair failed"};
 	}
@@ -211,6 +223,10 @@ func (win *Window) Clrtoeol() {
 	C.wclrtoeol((*C.WINDOW)(win));
 }
 
-func (win *Window) Box(verch, horch int16) {
+func (win *Window) Box(verch, horch int) {
 	C.box((*C.WINDOW)(win), C.chtype(verch), C.chtype(horch));
+}
+
+func (win *Window) Background(colour int32) {
+	C.wbkgd((*C.WINDOW)(win), C.chtype(colour));
 }
