@@ -30,7 +30,7 @@ var (
 	ErrorWinDelete = errors.New("window deletion failed")
 	ErrorWindowMove = errors.New("window movement failed")
 	ErrorWindowSyncok = errors.New("window syncok failed")
-	ErrorNoInfo = errors.New("Something went wrong, ncurses does not know :(")
+	Error = errors.New("Something went wrong, standard error")
 )
 
 // Cursor options.
@@ -59,6 +59,26 @@ func init() {
 	
 	Tabsize = (*int)(unsafe.Pointer(&C.TABSIZE));
 }
+/*
+====================================================
+Helper Functions
+====================================================
+*/
+
+func intToBool(i C.int) bool {
+	if i == 0 {
+		return false
+	}
+	return true
+}
+
+func boolToCint(b bool) C.int {
+	if b {
+		return C.TRUE
+	}
+	return C.FALSE
+}
+
 
 /*
 ====================================================
@@ -142,14 +162,14 @@ func Endwin() error {
 
 func Raw() error {
 	if C.raw() == ERR {
-		return ErrorNoInfo //Forkert ERROR
+		return Error //Forkert ERROR
 	}
 	return nil;
 }
 
 func Halfdelay(delay int) error {
 	if C.halfdelay(C.int(delay)) == ERR {
-		return ErrorNoInfo //Forkert ERROR
+		return Error //Forkert ERROR
 	}
 	return nil
 }
@@ -198,7 +218,7 @@ func (w *Window) Getch() int {
 func (w *Window) Getstr() (string, error) {
 	var buffer [1024]C.char
 	if C.wgetnstr(w.win, &buffer[0], 1024) == ERR {
-		return "", ErrorNoInfo
+		return "", Error
 	}
 	
 	s := C.GoString(&buffer[0])
@@ -238,7 +258,7 @@ func (w *Window) Border(ls, rs, ts, bs, tl, tr, bl, br int) error {
 	 C.chtype(ts), C.chtype(bs), C.chtype(tl), C.chtype(tr),
           C.chtype(bl), C.chtype(br)) == ERR {
           
-          return ErrorNoInfo
+          return Error
     }
     return nil
 }
@@ -368,42 +388,42 @@ func (w *Window) Background(colour int32) {
 //Attributes
 func (w *Window) Attroff(attrs int) error {
 	if C.wattroff(w.win, C.int(attrs)) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (w *Window) Attron(attrs int) error {
 	if C.wattron(w.win, C.int(attrs)) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (w *Window) Attrset(attrs int) error {
 	if C.wattrset(w.win, C.int(attrs)) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (w *Window) Color_set(pair int) error {
 	if C.wcolor_set(w.win, C.short(pair), nil) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (w *Window) Standend() error {
 	if C.wstandend(w.win) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (w *Window) Standout() error {
 	if C.wstandout(w.win) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
@@ -413,7 +433,7 @@ func (w *Window) Attr_get() (int, int, error) {
 	var pair C.short
 	
 	if C.wattr_get(w.win, &attr, &pair, nil) == ERR {
-		return 0,0, ErrorNoInfo
+		return 0,0, Error
 	}
 	
 	return int(attr), int(pair), nil
@@ -421,14 +441,14 @@ func (w *Window) Attr_get() (int, int, error) {
 
 func (w *Window) Chgat(n, attr, color int) error {
 	if C.wchgat(w.win, C.int(n), C.attr_t(attr), C.short(color), nil) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (w *Window) MoveChgat(x, y, n, attr, color int) error {
 	if C.mvwchgat(w.win, C.int(y), C.int(x), C.int(n), C.attr_t(attr), C.short(color), nil) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
