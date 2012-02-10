@@ -20,35 +20,35 @@ func (p *Panel) Window() *Window {
 
 func (p *Panel) Hide() error {
 	if C.hide_panel(p.panel) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (p *Panel) Show() error {
 	if C.show_panel(p.panel) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (p *Panel) Del() error {
 	if C.del_panel(p.panel) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (p *Panel) Top() error {
 	if C.top_panel(p.panel) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (p *Panel) Bottom() error {
 	if C.bottom_panel(p.panel) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
@@ -78,14 +78,14 @@ func (p *Panel) Below() *Panel {
 
 func (p *Panel) Move(x,y int) error {
 	if C.move_panel(p.panel, C.int(y),C.int(x)) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (p *Panel) Replace(win *Window) error {
 	if C.replace_panel(p.panel, win.win) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }

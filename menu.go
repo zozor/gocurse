@@ -73,7 +73,7 @@ func NewMenu(items []*Item) (*Menu, error) {
 	menu := &Menu{C.new_menu(&item[0])}
 	
 	if menu == nil {
-		return nil, ErrorNoInfo
+		return nil, Error
 	}
 	return menu, nil
 }
@@ -100,7 +100,7 @@ func (m *Menu) Mark() string {
 
 func (m *Menu) SetMark(mark string) error {
 	if C.set_menu_mark(m.menu, C.CString(mark)) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
     return nil
 }
@@ -123,14 +123,14 @@ func (m *Menu) Grey() int {
 
 func (i *Item) Free() error {
 	if C.free_item(i.item) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (m *Menu) Free() error {
 	if C.free_menu(m.menu) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
@@ -145,35 +145,35 @@ func (i *Item) Index() int {
 
 func (i *Item) OptsOn(opt ItemOptions) error {
 	if C.item_opts_on(i.item, opt.itemOptions) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (i *Item) OptsOff(opt ItemOptions) error {
 	if C.item_opts_off(i.item, opt.itemOptions) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (m *Menu) Drive(req int) error {
 	if C.menu_driver(m.menu, C.int(req)) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (m *Menu) OptsOn(opt MenuOptions) error {
 	if C.menu_opts_on(m.menu, opt.menuOptions) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (m *Menu) OptsOff(opt MenuOptions) error {
 	if C.menu_opts_off(m.menu, opt.menuOptions) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
@@ -184,21 +184,21 @@ func (m *Menu) Pad() int {
 
 func (m *Menu) Post() error {
 	if C.post_menu(m.menu) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (m *Menu) Unpost() error {
 	if C.unpost_menu(m.menu) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
 
 func (m *Menu) SetCurrentItem(item *Item) error {
 	if C.set_current_item(m.menu, item.item) == ERR {
-		return ErrorNoInfo
+		return Error
 	}
 	return nil
 }
